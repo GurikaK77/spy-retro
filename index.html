@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Raleway:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* თქვენს მიერ მოწოდებული მდიდრული სტილები */
+        :root {
+            --color1: #d94f4f; /* deeper red (for accents/danger) */
+            --color2: #4a3f72; /* deeper purple (for secondary accents) */
+            --color3: #5a8233; /* deeper green (for success/buttons) */
+            --color4: #cfa2a2; /* muted pink (for text/glow) */
+            --color5: #6f81a8; /* muted blue (for subtle details) */
+            --bg-gradient: linear-gradient(135deg, #121212, #1e1e1e);
+            --text-light: #e0e0e0;
+            --shadow-glow: 0 0 8px rgba(217, 79, 79, 0.8);
+            --transition: all 0.35s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: "Raleway", sans-serif;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow-x: hidden;
+            transition: opacity 0.5s ease-in-out;
+            position: relative;
+            perspective: 1000px; /* For 3D card flip */
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at 15% 30%,
+                rgba(217, 79, 79, 0.12) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 80% 70%,
+                rgba(90, 130, 51, 0.12) 0%,
+                transparent 45%
+            ),
+            radial-gradient(circle at 50% 50%, rgba(74, 63, 114, 0.12) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: -1;
+            animation: backgroundPulse 14s ease-in-out infinite alternate;
+            filter: none;
+        }
+
+        @keyframes backgroundPulse {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.08); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: visible;
+            filter: drop-shadow(0 0 1.5px var(--color1));
+            animation: particlesPulse 11s linear infinite;
+        }
+
+        @keyframes particlesPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.85; }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color1), var(--color4));
+            opacity: 0.6;
+            animation: floatUp 20s linear infinite;
+            box-shadow: 0 0 4px var(--color1), 0 0 8px var(--color4);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.25; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Container - main game box */
+        .container {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 20px;
+            padding: 3.5rem 3rem;
+            max-width: 450px; 
+            width: 90%;
+            box-shadow: 0 0 25px rgba(217, 79, 79, 0.8), inset 0 0 15px rgba(217, 79, 79, 0.25);
+            position: relative;
+            overflow: hidden;
+            border: 1.5px solid transparent;
+            background-clip: padding-box;
+            transition: box-shadow 0.5s ease;
+            z-index: 10; /* Ensure content is above background effects */
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            border-radius: 30%;
+            background: conic-gradient(
+                from 0deg, var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color1)
+            );
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+            filter: drop-shadow(0 0 6px var(--color1));
+            animation: rotateGradient 25s linear infinite;
+        }
+
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Title/Logo style */
+        h1 {
+            font-family: "Cinzel", serif;
+            font-size: 2.5rem;
+            color: var(--color1);
+            text-shadow: 0 0 6px var(--color1), 0 0 14px var(--color4);
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 6px var(--color1), 0 0 14px var(--color4); }
+            100% { text-shadow: 0 0 14px var(--color5), 0 0 20px var(--color1), 0 0 24px var(--color4); }
+        }
+        
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Input Grouping */
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Inputs and Selects */
+        input, select {
+            flex: 1;
+            padding: 1rem 1.4rem;
+            font-size: 1.05rem;
+            border-radius: 15px;
+            border: 2px solid var(--color5);
+            background: rgba(30, 30, 30, 0.85);
+            color: var(--text-light);
+            font-family: "Raleway", sans-serif;
+            transition: var(--transition);
+            box-shadow: inset 0 0 5px rgba(146, 168, 209, 0.7);
+            margin: 0; /* Override default margin */
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--color3);
+            box-shadow: 0 0 10px var(--color3), inset 0 0 8px var(--color3);
+            background: rgba(30, 40, 20, 0.95);
+        }
+        
+        /* Player Input Section specific layout */
+        #playerInput > div:first-of-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        #playerName {
+            flex: 1;
+        }
+        
+        #playerInput > button {
+            margin: 15px 0 20px 0;
+            width: 100%;
+        }
+
+        /* Player List */
+        .player-list { /* ID #playerList acts as this class wrapper */
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 15px;
+            padding: 1rem 1.2rem;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 2px solid var(--color5);
+            box-shadow: inset 0 0 10px rgba(146, 168, 209, 0.5);
+            margin-bottom: 20px;
+        }
+
+        #playerList div { /* Actual player items */
+            background: linear-gradient(90deg, var(--color4) 0%, var(--color2) 100%);
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.9rem;
+            border-radius: 12px;
+            color: #222;
+            font-weight: 600;
+            font-size: 1.05rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s ease;
+        }
+        
+        #playerList div:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Buttons (The .btn style) */
+        .btn, button { /* Applying .btn styles to all buttons */
+            padding: 1rem 2.2rem;
+            background: linear-gradient(45deg, var(--color3), var(--color1));
+            color: var(--text-light);
+            font-weight: 700;
+            font-family: "Raleway", sans-serif;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(136, 176, 75, 0.8);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            user-select: none;
+            text-shadow: 0 0 5px rgba(255 255 255 / 0.3);
+        }
+
+        .btn:hover, button:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(136, 176, 75, 1), 0 0 15px var(--color1);
+            background: linear-gradient(45deg, var(--color1), var(--color3));
+        }
+
+        .btn:active, button:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 5px 15px rgba(136, 176, 75, 0.6);
+        }
+
+        #endGameBtn {
+            background: linear-gradient(135deg, #8B0000, #C41E3A); /* Danger style */
+            box-shadow: 0 6px 18px rgba(196, 30, 58, 0.8);
+        }
+
+        #endGameBtn:hover {
+            box-shadow: 0 10px 25px rgba(196, 30, 58, 1);
+            background: linear-gradient(135deg, #C41E3A, #8B0000);
+        }
+        
+        /* Role Card Flip Styles */
+        #roleSection {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #roleDisplay {
+            width: 100%;
+            height: 200px;
+            margin: 30px 0;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .role-card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+            color: var(--text-light);
+            padding: 20px;
+            box-sizing: border-box;
+            border: 3px solid transparent;
+            text-align: center;
+            user-select: none;
+        }
+
+        #card-back {
+            background: linear-gradient(135deg, var(--color2), var(--color5));
+            transform: rotateY(0deg);
+            font-size: 1.4rem;
+            border-color: var(--color4);
+        }
+        
+        #card-front {
+            background: linear-gradient(135deg, var(--color3), #3e925b); /* Default word color */
+            transform: rotateY(180deg);
+            font-size: 2.2rem;
+            border-color: var(--color3);
+        }
+        
+        #roleSection.flipped #roleDisplay {
+            transform: rotateY(180deg);
+        }
+
+        .spy-card-color {
+            background: linear-gradient(135deg, #8B0000, #C41E3A) !important;
+            border-color: var(--color1) !important;
+        }
+        
+        .role-text-label {
+            font-size: 1.2rem;
+            color: var(--color4);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        /* Specific role styles (for card front) */
+        .spy-role-text {
+            color: #E03C3C;
+            text-shadow: 0 0 15px #E03C3C, 0 0 30px #FF6F61;
+            font-weight: 900;
+            font-size: 3.2rem;
+            letter-spacing: 0.12em;
+            animation: pulseSpy 2.5s infinite alternate;
+        }
+        
+        @keyframes pulseSpy {
+            0% { text-shadow: 0 0 15px #E03C3C, 0 0 30px #FF6F61; }
+            100% { text-shadow: 0 0 25px #FF6F61, 0 0 40px #E03C3C; }
+        }
+
+        .word-role-text {
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 2.6rem;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 10px var(--color4);
+        }
+
+        /* Timer and Game Section */
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2.5rem 0;
+            user-select: none;
+        }
+
+        #timer {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: var(--color3);
+            text-shadow: 0 0 25px var(--color3), 0 0 40px var(--color5);
+            font-family: "Cinzel", serif;
+            letter-spacing: 0.1em;
+            margin: 20px 0;
+            padding: 10px 0;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 15px;
+            border: 2px solid var(--color3);
+            user-select: none;
+            width: 100%;
+        }
+        
+        #timer.danger {
+            color: #E03C3C;
+            text-shadow: 0 0 25px #E03C3C, 0 0 40px #FF6F61;
+            border-color: #E03C3C;
+        }
+        
+        #gameSection p {
+            font-size: 1.1rem;
+            color: var(--color4);
+            margin-top: 15px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        /* Poll Section */
+        #pollSection {
+            margin-top: 20px;
+            padding: 25px;
+            border: 2px solid var(--color2);
+            border-radius: 15px;
+            background-color: rgba(30, 30, 30, 0.8);
+            box-shadow: inset 0 0 10px var(--color2);
+        }
+        
+        #pollSection h2 {
+            color: var(--color4);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px var(--color4);
+            font-family: "Cinzel", serif;
+        }
+        
+        #pollOptions label {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            background-color: rgba(74, 63, 114, 0.4); 
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 1px solid var(--color2);
+        }
+        
+        #pollOptions label:hover {
+            background-color: rgba(74, 63, 114, 0.6);
+            box-shadow: 0 0 8px var(--color5);
+        }
+        
+        /* Result Section */
+        #resultSection {
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        #resultDisplay {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            font-weight: 600;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .win { 
+            color: var(--color3); 
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--color3);
+        }
+        
+        .lose { 
+            color: var(--color1); 
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--color1);
+        }
+        
+        .spy-message {
+            display: block;
+            margin-top: 25px;
+            font-size: 1.2rem;
+            color: var(--color4);
+            font-style: italic;
+        }
+
+        .spy-message strong, .spy-list-reveal strong {
+            color: var(--text-light);
+            text-shadow: 0 0 5px var(--color4);
+        }
+
+        .spy-list-reveal {
+            font-size: 1.1rem;
+            color: var(--color5);
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            #playerInput > div:first-of-type {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #playerName, #playerInput > button {
+                width: 100%;
+                margin: 0;
+            }
+            .btn, button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            #timer {
+                font-size: 3.5rem;
+            }
+            .role-card {
+                height: 180px;
+            }
+            .spy-role-text {
+                font-size: 2.5rem;
+            }
+            .word-role-text {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="particles">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 10 + 5; 
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDelay = `-${Math.random() * 20}s`; 
+                particlesContainer.appendChild(particle);
+            }
+        });
+    </script>
+</div>
+    
+<div class="container">
+    <h1>SPY</h1>
+
+    <div id="playerInput">
+        <div>
+            <input type="text" id="playerName" placeholder="მოთამაშის სახელი">
+            <button onclick="addPlayer()"><i class="fas fa-plus"></i> დამატება</button>
+        </div>
+        <div id="playerList" class="player-list"></div>
+
+        <div class="input-group">
+            <label for="spyCount"><i class="fas fa-user-secret" style="color: var(--color1);"></i> ჯაშუშების რაოდენობა: </label>
+            <select id="spyCount">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()"><i class="fas fa-gavel"></i> დაწყება</button>
+    </div>
+
+    <div id="roleSection" class="hidden">
+        <div id="roleDisplay" onclick="revealRole()">
+            <div id="card-back" class="role-card">
+                <span id="player-turn-name"></span><br>
+                <span>დააჭირეთ სანახავად</span>
+            </div>
+            <div id="card-front" class="role-card">
+                <div class="role-text-label"></div>
+                <div id="role-text-role"></div>
+            </div>
+        </div>
+        <button onclick="nextRole()" id="nextRoleBtn" class="hidden"><i class="fas fa-chevron-right"></i> შემდეგი</button>
+    </div>
+
+    <div id="gameSection" class="hidden">
+        <div id="timer">02:00</div>
+        <div class="btn-group">
+            <button id="startTimerBtn" onclick="startTimer()"><i class="fas fa-stopwatch"></i> ტაიმერის დაწყება</button>
+            <button id="endGameBtn" class="hidden" onclick="startPoll()"><i class="fas fa-flag-checkered"></i> თამაშის დასრულება</button>
+        </div>
+        
+    </div>
+    
+    <div id="pollSection" class="hidden">
+        <h2><i class="fas fa-check-to-slot"></i> აირჩიეთ ჯაშუში</h2>
+        <div id="pollOptions"></div>
+        <button onclick="submitVote()"><i class="fas fa-vote-yea"></i> არჩევა</button>
+    </div>
+
+    <div id="resultSection" class="hidden">
+        <div id="resultDisplay"></div>
+        <button onclick="restartGame()"><i class="fas fa-redo"></i> რესტარტი</button>
+    </div>
+</div>
+
+<audio id="alarmSound">
+    <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    let players = [];
+    let roles = [];
+    let chosenWord = "";
+    let currentIndex = 0;
+    let timerInterval;
+    let timeLeft = 0;
+
+    const words = [
+        "ფეხბურთი", "თეატრი", "კომპიუტერი", "სახლი", "ტელეფონი", "საქართველო", "კუ", "ძაღლი", "ჩრდილი", "საიდუმლო", "ყვავილი", "წიგნი", "ჩანთა", "მთა", "საათი", "ნაყინი", "ფანარი", "წყალი", "ფანჯარა", "კატა", "კარადა", "სკამი", "ტყე", "ხე", "ცხენი", "ბრინჯი", "პური", "ბოსტანი", "კოკა კოლა", "ყავა", "ჩაი",  "სასმელი", "თევზი", "ზღვა",  "ვარსკვლავი", "მთვარე", "ღამე", "დღე", "ქარი", "წვიმა", "თოვლი", "გრილი", "ფერი", "სიტყვა",  "მუსიკა", "პიანინო", "გიტარა", "ბგერა",  "ვიდეო",  "სერიალი", "საღამო", "დილა",  "ხედი", "კარავი", "ბანაკი", "საბანი", "დრონი",  "მიკროფონი",  "ჩაფხუტი", "სათვალე",  "ზურგჩანთა", "ვერცხლი", "ბენზინი", "ფაზლი", "ყუთი", "პლანშეტი", "მოლბერტი", "კარტოფილი", "ჩამრთველი", "კიბე", "ხალიჩა", "ფარდები", "თიხა", "ქაფი", "ტილო", "ბისიკლეტი", "სანათი", "მეტრონი", "კომპასი", "სარკე", "ბალიში", "გოგო", "გოგონა", "ბატონი", "ბალახი", "სანახავი", "საფენი", "დანა", "კოვზი", "ჩანგალი", "თასი", "ჭიქა", "ყუთი", "ბოთლი", "საფარი", "პლედო", "გოგლა", "რეკეტი", "ბურთი", "ხალათი", "პლაჟი", "ქუდი", "კეპი", "ჩაფხუტი", "ჟილეტი", "შარვალი", "კომბინიზონი", "წყვილი", "შარფი", "ყურსასმენი", "მაკრატელი"
+    ];
+
+    function addPlayer() {
+        let nameInput = document.getElementById("playerName");
+        let name = nameInput.value.trim();
+        if (name && !players.includes(name)) {
+            players.push(name);
+            nameInput.value = "";
+            updatePlayerList();
+        } else if (players.includes(name)) {
+            alert("ეს მოთამაშე უკვე დამატებულია!");
+        }
+    }
+
+    function updatePlayerList() {
+        let list = document.getElementById("playerList");
+        list.innerHTML = "";
+        if (players.length === 0) {
+            list.innerHTML = `<div style="text-align: center; color: var(--color4); background: transparent; box-shadow: none;">დაამატეთ მოთამაშეები</div>`;
+            return;
+        }
+        players.forEach(p => {
+            let div = document.createElement("div");
+            div.textContent = p;
+            list.appendChild(div);
+        });
+    }
+
+    function startGame() {
+        if (players.length < 3) { 
+            alert("მინიმუმ 3 მოთამაშე უნდა იყოს!"); 
+            return; 
+        }
+
+        let spyCount = parseInt(document.getElementById("spyCount").value);
+        if (spyCount >= players.length) { 
+            alert("ჯაშუშების რაოდენობა უნდა იყოს ნაკლები მოთამაშეების რაოდენობაზე!"); 
+            return; 
+        }
+
+        chosenWord = words[Math.floor(Math.random() * words.length)];
+        roles = Array(players.length).fill(chosenWord);
+
+        let indices = [...Array(players.length).keys()];
+        indices.sort(() => Math.random() - 0.5);
+        indices.slice(0, spyCount).forEach(i => roles[i] = "ჯაშუში");
+
+        let combined = players.map((p, i) => ({ name: p, role: roles[i] }));
+        combined.sort(() => Math.random() - 0.5);
+
+        players = combined.map(c => c.name);
+        roles = combined.map(c => c.role);
+
+        document.getElementById("playerInput").classList.add("hidden");
+        document.getElementById("roleSection").classList.remove("hidden");
+        currentIndex = 0;
+        prepareRoleDisplay();
+    }
+
+    function prepareRoleDisplay() {
+        // Reset card to show the back
+        document.getElementById("roleSection").classList.remove("flipped");
+        document.getElementById("nextRoleBtn").classList.add("hidden");
+        
+        // Update player name on the back of the card
+        document.getElementById("player-turn-name").innerHTML = players[currentIndex] + "";
+        
+        // Reset card front style
+        document.getElementById("card-front").classList.remove("spy-card-color");
+        document.getElementById("card-front").querySelector('.role-text-label').textContent = "";
+        document.getElementById("role-text-role").textContent = "დააჭირე სანახავად";
+        document.getElementById("role-text-role").classList.remove("spy-role-text", "word-role-text");
+    }
+
+    function revealRole() {
+        if (!document.getElementById("roleSection").classList.contains("flipped")) {
+            let role = roles[currentIndex];
+            let roleText = "";
+            let labelText = "";
+            let roleElement = document.getElementById("role-text-role");
+            let cardFront = document.getElementById("card-front");
+
+            if (role === "ჯაშუში") {
+                roleText = "ჯაშუში";
+                labelText = ""; // No label for Spy
+                cardFront.classList.add("spy-card-color");
+                roleElement.classList.add("spy-role-text");
+            } else {
+                roleText = chosenWord;
+                labelText = "სიტყვა:";
+                cardFront.classList.remove("spy-card-color");
+                roleElement.classList.add("word-role-text");
+            }
+            
+            cardFront.querySelector('.role-text-label').textContent = labelText;
+            roleElement.textContent = roleText;
+            
+            // Flip the card
+            document.getElementById("roleSection").classList.add("flipped");
+            document.getElementById("nextRoleBtn").classList.remove("hidden");
+        }
+    }
+    
+    function nextRole() {
+        currentIndex++;
+        if (currentIndex < players.length) {
+            prepareRoleDisplay();
+        } else {
+            // All roles assigned, start the game (timer section)
+            document.getElementById("roleSection").classList.add("hidden");
+            document.getElementById("gameSection").classList.remove("hidden");
+            document.getElementById("timer").textContent = "02:00"; 
+            document.getElementById("startTimerBtn").classList.remove("hidden");
+            document.getElementById("endGameBtn").classList.add("hidden");
+        }
+    }
+
+    function startTimer() {
+        document.getElementById("startTimerBtn").classList.add("hidden");
+        document.getElementById("endGameBtn").classList.remove("hidden");
+
+        timeLeft = 120; // 2 minutes
+        updateTimerDisplay(timeLeft);
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay(timeLeft);
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById("alarmSound").play();
+                startPoll();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay(time) {
+        let minutes = String(Math.floor(time / 60)).padStart(2, "0");
+        let seconds = String(time % 60).padStart(2, "0");
+        document.getElementById("timer").textContent = `${minutes}:${seconds}`;
+        
+        // Add danger class when timer is low
+        if (time <= 30 && time > 0) { // Changed to 30 seconds for better alert
+            document.getElementById("timer").classList.add("danger");
+        } else {
+            document.getElementById("timer").classList.remove("danger");
+        }
+    }
+
+    function startPoll() {
+        clearInterval(timerInterval);
+        document.getElementById("gameSection").classList.add("hidden");
+        document.getElementById("pollSection").classList.remove("hidden");
+        
+        let pollOptions = document.getElementById("pollOptions");
+        pollOptions.innerHTML = "";
+        
+        players.forEach((player, index) => {
+            let label = document.createElement("label");
+            label.innerHTML = `<input type="radio" name="spyCandidate" value="${index}"> ${player}`;
+            pollOptions.appendChild(label);
+        });
+    }
+
+    function submitVote() {
+        let selectedIndex = document.querySelector('input[name="spyCandidate"]:checked')?.value;
+        
+        if (selectedIndex === undefined) {
+            alert("გთხოვთ აირჩიოთ ჯაშუში!");
+            return;
+        }
+
+        const guessedPlayer = players[selectedIndex];
+        const spyPlayers = roles.map((r, i) => r === "ჯაშუში" ? players[i] : null).filter(Boolean);
+        let resultMessage = "";
+
+        // Check if the guessed player is actually a spy
+        if (spyPlayers.includes(guessedPlayer)) {
+            // Players win (Spy loses)
+            resultMessage = `<span class="lose">ჯაშუშმა წააგო!</span> მოთამაშეებმა სწორად გამოიცნეს: <strong>${guessedPlayer}</strong>.`;
+        } else {
+            // Spy wins (Players lose)
+            resultMessage = `<span class="win">ჯაშუშმა მოიგო!</span> მოთამაშეებმა ვერ გამოიცნეს სწორად. თქვენ აირჩიეთ <strong>${guessedPlayer}</strong>.`;
+        }
+        
+        document.getElementById("pollSection").classList.add("hidden");
+        document.getElementById("resultSection").classList.remove("hidden");
+                        
+        document.getElementById("resultDisplay").innerHTML = `
+            ${resultMessage}
+            <div class="spy-message">საიდუმლო სიტყვა იყო: <strong style="color: var(--color1);">${chosenWord}</strong></div>
+            <div class="spy-list-reveal">გამოუვლენელი ჯაშუშ(ებ)ი: <strong>${spyPlayers.join(", ")}</strong></div>
+        `;
+    }
+
+    function restartGame() {
+        document.getElementById("resultSection").classList.add("hidden");
+        document.getElementById("playerInput").classList.remove("hidden");
+        document.getElementById("pollSection").classList.add("hidden");
+        document.getElementById("roleSection").classList.add("hidden");
+        document.getElementById("gameSection").classList.add("hidden");
+        document.getElementById("startTimerBtn").classList.remove("hidden");
+        document.getElementById("endGameBtn").classList.add("hidden");
+        
+        // Reset game state
+        players = [];
+        roles = [];
+        chosenWord = "";
+        currentIndex = 0;
+        clearInterval(timerInterval);
+        document.getElementById("timer").textContent = "02:00";
+        updatePlayerList();
+    }
+    
+    // Initial call to set up the player list hint
+    updatePlayerList();
+</script>
+</body>
+</html>
